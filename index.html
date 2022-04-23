@@ -5,7 +5,120 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotstar</title>
-    <link rel="stylesheet" href="/styles.css">
+    <!-- <link rel="stylesheet" href="/styles.css"> -->
+    <style>
+        #navbar>#side{
+    display: flex;
+    justify-content: end;
+    
+    padding: 10px;
+    gap: 30px;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+    background-color: #131a28;
+   
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+#logo{
+    height: 40px;
+    width: 115px;
+    margin: auto;
+    background-image: url("https://secure-media.hotstarext.com/web-assets/prod/images/brand-logos/disney-hotstar-logo-dark.svg");
+}
+#navbar a:hover{
+    color: black;
+}
+#navbar a{
+    cursor: pointer;
+}
+#hotstar{
+    background-color: #131a28;
+    height: 100%;
+    padding: 5px;
+    border-radius: 10px;
+}
+h1{
+    text-align: center;
+    color: aliceblue;
+}
+
+#main{
+    width: 90%;
+    display: flex;
+    margin: auto;
+    justify-content: space-evenly;
+    background-color: rgb(1, 43, 43);
+    border-radius: 10px;
+    margin-top: 2%;
+}
+#moive_list{
+   overflow: scroll;
+    
+
+}
+#moive_name{
+   width: 50%;
+   height: 600px;
+   
+
+   
+}
+
+#inputBox{
+    width: 40%;
+    height: 100%;
+    margin-top: 20px;
+    
+    
+}
+
+ 
+#moiveDiv{
+    text-align: center;
+   
+}
+img{
+   height: 450px;
+   width: 65%;
+   border-radius: 10px;
+   margin-top: 20px;
+  
+}
+
+#query{
+    width: 96%;
+    height: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+#image{
+    height: 250px;
+    width: 200px;
+}
+
+#trend{
+    
+    height: 400px;
+    display: flex;
+    overflow: scroll;
+    overflow-y: hidden;
+    margin: auto;
+    background-color: rgb(1, 43, 43);
+    border-radius: 10px;
+}
+#trendBox{
+    
+  margin: 1%;
+  height: 300px;
+
+}
+
+
+    </style>
 
 
 </head>
@@ -49,4 +162,146 @@
 </body>
 </html>
 
-<script src="/index.js"></script>
+<!-- <script src="/index.js"></script> -->
+<script>
+    let id;
+let container=document.getElementById("moive_name");
+let box=document.getElementById("moive_list");
+
+async function myFun(){
+    try{
+        const query=document.getElementById("query").value;
+
+        let res= await fetch(`http://www.omdbapi.com/?apikey=8ffda9e1&s=${query}`);
+        let data= await res.json();
+        console.log("data",data);
+
+        const moive=data.Search;
+        return moive
+       }
+       catch(err)
+       {
+        console.log(err)
+       }
+
+    }
+        
+    function appendMoives(data){
+    box.innerText=null;
+    data.forEach(function(el,index){
+           
+           
+    let p=document.createElement("h4");
+    p.addEventListener("click",function(){
+    showMoive(el,index)
+    })
+
+    p.innerText= el.Title;
+    box.append(p)
+    })
+    }
+    
+    async function main(){
+    let data=await myFun()
+
+    if(data==undefined)
+
+    {
+        return false
+    }
+        appendMoives(data)
+}
+
+    function debounce(func,delay){
+    if(id)
+    {
+        clearTimeout(id)
+    }
+    id= setTimeout(function(){
+    func()
+        },delay)
+    }
+        
+
+    let arr=[];
+
+    function showMoive(el,index){
+        
+    arr.push(el);
+    console.log(arr);
+        
+    arr.map(function(el,index){
+           
+    container.innerText=null;
+
+    let div=document.createElement("div");
+    div.setAttribute("id","moiveDiv");
+
+    let image=document.createElement("img");
+    image.src=el.Poster;
+              
+    let title=document.createElement("h4");
+    title.innerText=`Title: ${el.Title}`;
+
+    let date= document.createElement("p");
+    date.innerText=`Year: ${el.Year}`;
+    date.setAttribute("id","date");
+
+    div.append(image,title,date);
+    container.append(div);
+          
+            
+              
+              
+    })
+         
+    }
+
+    let url="https://api.themoviedb.org/3/trending/all/day?api_key=0eaad18ad8092d58cef6b9db7c793e13" ;
+    // let url ="https://api.themoviedb.org/3/movie/popular?api_key=0eaad18ad8092d58cef6b9db7c793e13&language=en-US&page=1";
+
+    fetch(url)
+    .then(function(res){
+        return res.json()
+    })
+    .then(function(res){
+
+    let data= res.results
+    console.log(data)
+    appendData(data)
+    })
+    .catch(function(err){
+    console.log(err)
+    })
+
+    let trending= document.getElementById("trend");
+    function appendData(data){
+
+    data.map(function(el,index){
+
+    let div=document.createElement("div")
+    div.setAttribute("id","trendBox")
+            
+    let image=document.createElement("img")
+    image.src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRBkxgl2A2PhE_6tklFLT0bxn5NLhvhsnpXGhmXBt_zotrlVHmo"
+    image.setAttribute("id","image")
+
+    // let poster = document.createElement("img")
+    // poster.src=`${el.backdrop_path || poster_path}`
+
+    let name= document.createElement("h4")
+    name.innerText=`Title: ${el.title || el.name}`
+
+    let date=document.createElement("p")
+    date.innerText=`Releasing On: ${el.release_date || el.first_air_date}`
+
+    div.append(image,name,date)
+
+    trending.append(div)
+
+    })
+        
+
+}
+
+</script>
